@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Build Your Own Trading Alert Bot</title>
+<style>
+  @page { size: A4; }
+  :root { --ink:#1b2430; --muted:#5b6675; --accent:#1f6feb; --green:#1a7f37; --red:#cf222e;
+          --amber:#9a6700; --line:#dde3ea; --soft:#f4f7fb; }
+  * { box-sizing: border-box; }
+  body { font: 10.6pt/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); margin: 0; }
+  h1 { font-size: 22pt; line-height: 1.2; margin: 0 0 6mm; }
+  h2 { font-size: 13pt; margin: 7mm 0 2mm; }
+  h3 { font-size: 11pt; margin: 5mm 0 1.5mm; }
+  p { margin: 0 0 3mm; }
+  ol, ul { margin: 0 0 3mm; padding-left: 6mm; }
+  li { margin-bottom: 1.2mm; }
+  code, .mono { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 9.4pt; background: var(--soft);
+                border: 1px solid var(--line); border-radius: 3px; padding: 0 1.2mm; }
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.6pt; }
+  th, td { text-align: left; padding: 1.6mm 2mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--soft); }
+  .chapter { page-break-before: always; }
+  .kicker { color: var(--accent); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 9pt; margin-bottom: 1mm; }
+  .box { border-radius: 6px; padding: 3mm 4mm; margin: 3mm 0 4mm; border: 1px solid var(--line); background: var(--soft); page-break-inside: avoid; }
+  .box b:first-child { display: block; margin-bottom: 1mm; }
+  .tip { border-left: 4px solid var(--green); }
+  .warn { border-left: 4px solid var(--red); background: #fff6f6; }
+  .note { border-left: 4px solid var(--accent); }
+  .step { display: flex; gap: 3mm; margin: 2.5mm 0; page-break-inside: avoid; }
+  .step .n { flex: 0 0 7mm; height: 7mm; border-radius: 50%; background: var(--accent); color: #fff;
+             font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 10pt; }
+  .step .t { flex: 1; padding-top: .6mm; }
+  .tg { width: 105mm; background: #e7f0e2; border-radius: 10px; padding: 3mm 4mm; margin: 3mm 0 4mm;
+        font-size: 9.6pt; line-height: 1.45; page-break-inside: avoid; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .tg .who { color: #2e7d32; font-weight: 700; font-size: 8.8pt; margin-bottom: 1mm; }
+  .tg i { color: var(--muted); }
+  .path { font-family: "SF Mono", Menlo, monospace; font-size: 9.4pt; color: var(--accent); }
+  .cover { height: 255mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .cover .top { margin-top: 30mm; }
+  .cover h1 { font-size: 34pt; margin-bottom: 5mm; }
+  .cover .sub { font-size: 14pt; color: var(--muted); max-width: 140mm; }
+  .cover .badges span { display: inline-block; border: 1px solid var(--line); border-radius: 20px; padding: 1.5mm 4mm;
+                        margin: 0 2mm 2mm 0; font-size: 10pt; }
+  .cover .brand { font-weight: 700; font-size: 12pt; }
+  .toc li { margin-bottom: 1.8mm; }
+  .small { font-size: 9pt; color: var(--muted); }
+  .chart { margin: 3mm 0 4mm; page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ======================= COVER ======================= -->
+<section class="cover">
+  <div class="top">
+    <div class="kicker">{{BRAND}} · Course + Code Kit</div>
+    <h1>Build Your Own Trading Alert Bot</h1>
+    <p class="sub">Get a Telegram message when a stock, crypto or currency turns BUY or SELL. It's free to run, needs no coding, and can be set up on a phone or iPad.</p>
+  </div>
+  <div>
+    <div class="badges"><span>✅ $0 running costs</span><span>📱 iPad &amp; phone friendly</span><span>🧪 Honest backtests</span><span>⏱ About 30 minutes</span></div>
+    <p class="small">Not financial advice. Trading involves risk, and you can lose money. Read Chapter 1 and DISCLAIMER.md before using the signals.</p>
+    <p class="brand">{{BRAND}}</p>
+  </div>
+</section>
+
+<!-- ======================= CONTENTS ======================= -->
+<section class="chapter">
+  <h1>Contents</h1>
+  <ol class="toc">
+    <li><b>Read this first:</b> what this bot can and can't do</li>
+    <li><b>How the signals work:</b> the 200-day trend rule in plain English</li>
+    <li><b>What you need:</b> two free accounts</li>
+    <li><b>Create your Telegram bot</b></li>
+    <li><b>Put the bot on GitHub:</b> computer and iPad methods</li>
+    <li><b>Connect Telegram to GitHub:</b> your two secrets</li>
+    <li><b>Switch it on and test it</b></li>
+    <li><b>Make it yours:</b> watchlist, strategies and alert time</li>
+    <li><b>Backtesting:</b> how to tell if a strategy is any good</li>
+    <li><b>Using signals sensibly:</b> stops, position size and paper trading</li>
+    <li><b>Troubleshooting:</b> every error we've seen, and the fix</li>
+    <li><b>Glossary</b></li>
+  </ol>
+  <div class="box note"><b>What's in your download</b>
+    <ul>
+      <li><b>This guide</b> (PDF)</li>
+      <li><b>Trading-Bot-Kit.zip</b>: the complete bot. You upload it to your own GitHub in Chapter 5.</li>
+    </ul>
+  </div>
+  <div class="box tip"><b>How to use this guide</b>Work through Chapters 3–7 in order, with the guide open next to GitHub and Telegram. Each step is short. If something goes wrong, jump to Chapter 11.</div>
+</section>
+
+<!-- ======================= 1 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 1</div>
+  <h1>Read this first</h1>
+  <p>By the end of this guide, you'll have your own bot that:</p>
+  <ul>
+    <li>checks your chosen stocks, ETFs, crypto and currencies <b>every day, automatically</b>;</li>
+    <li>sends you a <b>daily summary</b> on Telegram;</li>
+    <li>sends a <b>"Time to BUY" or "Time to SELL" alert</b> when a signal changes, including the exact price that would flip it back;</li>
+    <li>can <b>backtest</b> itself, replaying years of history to show how the rules would have done.</li>
+  </ul>
+  <p>It runs on GitHub's free servers, so your phone doesn't need to be on, you don't need a computer running, and there's no monthly fee.</p>
+
+  <h2>The honest part</h2>
+  <p>Most trading courses promise to "beat the market". This one doesn't, because in honest testing, simple rules like these usually <b>don't</b>. We tested 8 strategies on 16 markets over up to 25 years:</p>
+  <table>
+    <tr><th></th><th>Buy &amp; hold</th><th>The bot's default rule</th></tr>
+    <tr><td>Worst drop, 2001–2020 (includes the 2008 crash)</td><td>−60%</td><td><b>−38%</b></td></tr>
+    <tr><td>Yearly return, 2021–2026 (data the rule was never tuned on)</td><td><b>13.4%</b></td><td>9.0%</td></tr>
+  </table>
+  <p class="small">These are typical (median) results across 16 markets, including a 0.1% fee per trade.</p>
+  <p>So the bot's real strength is <b>getting you out before the worst of a crash</b>, and giving you clear, unemotional rules to follow. Its weakness is that it sometimes sells, then buys back higher. Over long bull markets, that costs some return.</p>
+  <div class="box warn"><b>Not financial advice</b>The bot follows mechanical rules on past prices. It knows nothing about news, earnings or your finances. Signals can be late or wrong. You alone are responsible for your trades. Never invest money you can't afford to lose.</div>
+</section>
+
+<!-- ======================= 2 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 2</div>
+  <h1>How the signals work</h1>
+  <h2>The 200-day average</h2>
+  <p>Take the closing prices of the last 200 trading days (about 10 months) and average them. You get one smooth line that shows the <b>long-term trend</b>.</p>
+  <ul>
+    <li>Price <b>above</b> the line → the long-term trend is up.</li>
+    <li>Price <b>below</b> the line → the long-term trend is down.</li>
+  </ul>
+  <div class="chart">
+    <svg viewBox="0 0 520 170" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial" font-size="11">
+      <rect x="0" y="0" width="520" height="170" fill="#f4f7fb" rx="6"/>
+      <polyline fill="none" stroke="#1f6feb" stroke-width="2.4" stroke-dasharray="6 4"
+        points="20,120 80,112 140,100 200,88 260,80 320,80 380,86 440,96 500,104"/>
+      <polyline fill="none" stroke="#1b2430" stroke-width="2"
+        points="20,128 50,112 80,104 110,96 140,84 170,74 200,66 230,58 260,62 290,70 320,84 340,96 360,100 380,108 410,116 440,112 470,118 500,124"/>
+      <circle cx="120" cy="92" r="6" fill="#1a7f37"/><text x="88" y="78" fill="#1a7f37" font-weight="bold">BUY</text>
+      <circle cx="372" cy="103" r="6" fill="#cf222e"/><text x="380" y="140" fill="#cf222e" font-weight="bold">SELL (3% below)</text>
+      <text x="24" y="20" fill="#1b2430">— price</text><text x="90" y="20" fill="#1f6feb">- - 200-day average</text>
+    </svg>
+  </div>
+  <h2>The rule the bot follows</h2>
+  <div class="box note">
+    <b>200-day trend rule (with 3% buffer)</b>
+    🟢 <b>BUY</b> when the price closes <b>above</b> its 200-day average.<br>
+    🔴 <b>SELL</b> when the price closes <b>more than 3% below</b> its 200-day average.
+  </div>
+  <p><b>Why the 3% buffer?</b> Without it, prices that hover around the line trigger BUY, SELL, BUY, SELL every few days ("whipsaws"), and each trade costs you fees. The buffer means the bot only sells when the trend has clearly broken. In testing, it cut trades from about 7 a year to about 2–3 and improved results.</p>
+  <h2>Why daily closes?</h2>
+  <p>The bot only looks at <b>finished</b> daily candles. Prices wiggle all day, and a signal based on the unfinished day could flip back by the close. Waiting for the close keeps alerts calm and reliable.</p>
+  <h2>What an alert looks like</h2>
+  <div class="tg"><div class="who">Your bot</div>
+    🟢 <b>Time to BUY Apple (AAPL)</b><br>Consider buying at around 356.27<br><br>
+    <b>Why:</b><br>• Price is 18.5% above its 200-day average (300.77)<br>• Sell trigger: a daily close below 291.75<br><br>
+    <i>Based on the 2026-11-13 daily close · strategy: 200-day trend rule (3% buffer).<br>Not financial advice. Do your own checks before trading.</i>
+  </div>
+  <p>The <b>trigger</b> line is the most useful part: it tells you exactly which price would flip the signal.</p>
+</section>
+
+<!-- ======================= 3 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 3</div>
+  <h1>What you need</h1>
+  <table>
+    <tr><th>Thing</th><th>Why</th><th>Cost</th></tr>
+    <tr><td><b>GitHub account</b> (github.com)</td><td>Stores the bot and runs it every day on GitHub's servers</td><td>Free</td></tr>
+    <tr><td><b>Telegram app</b></td><td>Where your alerts arrive</td><td>Free</td></tr>
+    <tr><td><b>Trading-Bot-Kit.zip</b></td><td>The bot itself (in your download)</td><td>Included</td></tr>
+    <tr><td>A computer, iPad or phone</td><td>Only for setup. After that it runs by itself.</td><td>–</td></tr>
+  </table>
+  <h2>Sign up</h2>
+  <div class="step"><div class="n">1</div><div class="t">Go to <b>github.com</b>, tap <b>Sign up</b> and follow the steps. Choose the <b>Free</b> plan.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">Install <b>Telegram</b> from the App Store or Google Play, or use <b>web.telegram.org</b>, and create an account.</div></div>
+  <div class="box tip"><b>On an iPad or phone, use Safari or Chrome for GitHub</b>The GitHub app can't do everything you need for setup. If a page looks cut down or a button is missing, tap <b>aA</b> (or <b>⋯</b>) in the address bar, then <b>Request Desktop Website</b>.</div>
+</section>
+
+<!-- ======================= 4 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 4</div>
+  <h1>Create your Telegram bot</h1>
+  <p>Telegram lets anyone create a bot for free by chatting with an official bot called <b>BotFather</b>.</p>
+  <div class="step"><div class="n">1</div><div class="t">In Telegram, search for <b>@BotFather</b> (with a blue tick) and open it. Tap <b>Start</b>.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">Send <code>/newbot</code>.</div></div>
+  <div class="step"><div class="n">3</div><div class="t">Type a <b>name</b> for your bot, e.g. <i>My Trading Alerts</i>.</div></div>
+  <div class="step"><div class="n">4</div><div class="t">Type a <b>username</b> ending in <code>bot</code>, e.g. <code>mytradingalerts123_bot</code>. It must be unique, so add numbers if it's taken.</div></div>
+  <div class="step"><div class="n">5</div><div class="t">BotFather replies with your <b>token</b>, which looks like <code>1234567890:AAEexampleXyZ1aB2cD3eF4gH5iJ6kL7m</code>. Copy all of it: the numbers, the colon, and everything after it.</div></div>
+  <div class="box warn"><b>Keep your token secret</b>Anyone with the token can control your bot. Don't paste it into chats, screenshots or forums. It only goes into GitHub (Chapter 6). If you ever share it by accident, send <code>/revoke</code> to BotFather to get a new one.</div>
+
+  <h2>Get your chat ID</h2>
+  <p>Your bot needs to know <b>who</b> to message. That's your personal chat ID.</p>
+  <div class="step"><div class="n">1</div><div class="t">Search for <b>@userinfobot</b>, open it and send any message.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">It replies with your details. Copy the number after <b>Id</b>, e.g. <code>123456789</code>.</div></div>
+  <div class="box warn"><b>Common mistake</b>The number at the start of your bot's token is the <b>bot's</b> ID, not yours. If you use it, Telegram refuses with <i>"the bot can't send messages to the bot"</i>.</div>
+
+  <h2>Say hi to your bot</h2>
+  <div class="step"><div class="n">1</div><div class="t">Open your new bot (BotFather gave you a link like <span class="path">t.me/mytradingalerts123_bot</span>) and tap <b>Start</b>, or just send "hi".</div></div>
+  <div class="box note"><b>Your bot won't reply, and that's normal</b>It isn't a chat bot. Messaging it once simply gives it permission to message you.</div>
+</section>
+
+<!-- ======================= 5 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 5</div>
+  <h1>Put the bot on GitHub</h1>
+  <h2>5.1 Create a private repository</h2>
+  <p>A "repository" (repo) is just a folder on GitHub.</p>
+  <div class="step"><div class="n">1</div><div class="t">On github.com, tap <b>+</b> (top right) → <b>New repository</b>.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">Name it, e.g. <code>trading-bot</code>.</div></div>
+  <div class="step"><div class="n">3</div><div class="t">Choose <b>Private</b>. Leave everything else as it is and tap <b>Create repository</b>.</div></div>
+
+  <h2>5.2 Unzip the kit</h2>
+  <ul>
+    <li><b>Computer:</b> double-click <code>Trading-Bot-Kit.zip</code>.</li>
+    <li><b>iPad/iPhone:</b> save the ZIP to the <b>Files</b> app and tap it once. It unzips into a <b>Trading-Bot-Kit</b> folder.</li>
+  </ul>
+
+  <h2>5.3 Upload the files</h2>
+  <div class="step"><div class="n">1</div><div class="t">On your new, empty repository page, tap the link <b>uploading an existing file</b>. On a repo that already has files, use <b>Add file → Upload files</b>.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">Select <b>every file</b> in the Trading-Bot-Kit folder <b>except the <code>workflows</code> folder</b>.
+     <br><b>Computer:</b> drag the files onto the page.
+     <br><b>iPad:</b> tap <b>choose your files</b> → <b>Browse</b> → open the Trading-Bot-Kit folder → <b>Select</b> → tap each file → <b>Open</b>.</div></div>
+  <div class="step"><div class="n">3</div><div class="t">Scroll down and tap <b>Commit changes</b>. That's GitHub's word for "save".</div></div>
+  <p>You should now see about 14 files, such as <code>main.py</code>, <code>config.yaml</code> and <code>strategies.py</code>.</p>
+
+  <h2>5.4 Add the "workflows" (the bot's schedule)</h2>
+  <p>Workflows tell GitHub <b>when</b> and <b>how</b> to run the bot. They must live in a special folder, <code>.github/workflows</code>, so you create them by pasting.</p>
+  <div class="step"><div class="n">1</div><div class="t">In the kit, open <code>workflows/1-signals.yml.txt</code>. On iPad, tap it in Files to preview it. Select all of the text and copy it.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">On GitHub, tap <b>Add file → Create new file</b>.</div></div>
+  <div class="step"><div class="n">3</div><div class="t">In the name box, type exactly: <span class="path">.github/workflows/signals.yml</span><br>
+     <span class="small">The slashes automatically create the folders. Don't forget the dot at the start.</span></div></div>
+  <div class="step"><div class="n">4</div><div class="t">Paste the text into the big box and tap <b>Commit changes</b> (twice).</div></div>
+  <div class="step"><div class="n">5</div><div class="t">Repeat for the other three files:</div></div>
+  <table>
+    <tr><th>Kit file</th><th>Name to type in GitHub</th><th></th></tr>
+    <tr><td>1-signals.yml.txt</td><td class="path">.github/workflows/signals.yml</td><td>Required</td></tr>
+    <tr><td>2-check-setup.yml.txt</td><td class="path">.github/workflows/check-setup.yml</td><td>Required</td></tr>
+    <tr><td>3-backtest.yml.txt</td><td class="path">.github/workflows/backtest.yml</td><td>Recommended</td></tr>
+    <tr><td>4-compare.yml.txt</td><td class="path">.github/workflows/compare.yml</td><td>Optional</td></tr>
+  </table>
+  <div class="box warn"><b>Spaces matter in these files</b>Always copy from the kit's <code>.txt</code> files, never by retyping. If GitHub shows a red error about the file when you commit, delete the file and paste it again.</div>
+</section>
+
+<!-- ======================= 6 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 6</div>
+  <h1>Connect Telegram to GitHub</h1>
+  <p>Your token and chat ID go into GitHub <b>secrets</b>. They're encrypted, and nobody can see them after you save them, not even you.</p>
+  <div class="step"><div class="n">1</div><div class="t">In your repository, open <b>Settings</b> (top tabs) → <b>Secrets and variables</b> → <b>Actions</b>.
+     <br><span class="small">Can't see it on iPad? Use Request Desktop Website, or go straight to <span class="path">github.com/YOUR-NAME/trading-bot/settings/secrets/actions</span></span></div></div>
+  <div class="step"><div class="n">2</div><div class="t">Tap <b>New repository secret</b>. For the <b>Name</b>, type <code>TELEGRAM_BOT_TOKEN</code>. For the <b>Secret</b>, paste your <b>whole</b> token. Tap <b>Add secret</b>.</div></div>
+  <div class="step"><div class="n">3</div><div class="t">Tap <b>New repository secret</b> again. For the <b>Name</b>, type <code>TELEGRAM_CHAT_ID</code>. For the <b>Secret</b>, paste your Id number (digits only). Tap <b>Add secret</b>.</div></div>
+  <div class="box tip"><b>Check the spelling of the names</b>They must be exactly <code>TELEGRAM_BOT_TOKEN</code> and <code>TELEGRAM_CHAT_ID</code>: capital letters, underscores, no spaces. One wrong letter and the bot can't find them.</div>
+</section>
+
+<!-- ======================= 7 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 7</div>
+  <h1>Switch it on and test it</h1>
+  <div class="step"><div class="n">1</div><div class="t">Open the <b>Actions</b> tab. If GitHub asks, tap <b>I understand my workflows, go ahead and enable them</b>.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">On the left, choose <b>Check setup</b> → <b>Run workflow</b> (on the right) → the green <b>Run workflow</b> button.</div></div>
+  <div class="step"><div class="n">3</div><div class="t">Wait about a minute. You should get a message like this:</div></div>
+  <div class="tg"><div class="who">Your bot</div>🔧 <b>Setup check</b><br><br>✅ config.yaml loaded<br>✅ Strategy: sma_trend_buffer<br>✅ AAPL: data OK<br>✅ BTC-USD: data OK<br>…<br><br>🎉 Everything works. Daily alerts are on.</div>
+  <div class="step"><div class="n">4</div><div class="t">Now run <b>Trading signals</b> the same way. You'll get your first summary:</div></div>
+  <div class="tg"><div class="who">Your bot</div>👋 <b>Now tracking</b> · 200-day trend rule (3% buffer)<br>You'll get an alert whenever one of these changes.<br><br>
+    🟢 Apple (AAPL): <b>BUY / hold</b> @ 356.27 · Sell trigger: close below 291.75<br>
+    🟢 Microsoft (MSFT): <b>BUY / hold</b> @ 523.88 · Sell trigger: close below 427.28<br>
+    🔴 Bitcoin (BTC-USD): <b>SELL / stay out</b> @ 64,128 · Buy trigger: close above 72,974<br>…</div>
+  <h2>🎉 You're done</h2>
+  <p>From now on, it runs <b>every day at 05:37 UTC</b> and sends:</p>
+  <ul>
+    <li>a 📊 <b>daily summary</b> of all your symbols;</li>
+    <li>a 🟢 / 🔴 <b>"Time to BUY / SELL"</b> alert whenever a signal changes.</li>
+  </ul>
+  <p>Quiet days mean nothing changed. Run <b>Trading signals</b> by hand any time you want an up-to-date summary.</p>
+  <div class="box note"><b>If a run fails, GitHub tells you</b>Failed runs show a red ❌ in the Actions tab, and GitHub emails you. Chapter 11 explains every error.</div>
+</section>
+
+<!-- ======================= 8 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 8</div>
+  <h1>Make it yours</h1>
+  <h2>Change your watchlist</h2>
+  <p>Open <code>config.yaml</code> in your repository → tap the ✏️ pencil → edit the list → <b>Commit changes</b>.</p>
+  <table>
+    <tr><th>Market</th><th>Symbol format</th><th>Examples</th></tr>
+    <tr><td>US stocks &amp; ETFs</td><td>ticker</td><td><code>AAPL</code> <code>TSLA</code> <code>SPY</code> <code>QQQ</code></td></tr>
+    <tr><td>London</td><td>ticker<b>.L</b></td><td><code>VUSA.L</code> <code>BP.L</code></td></tr>
+    <tr><td>Johannesburg</td><td>ticker<b>.JO</b></td><td><code>NPN.JO</code> <code>SBK.JO</code></td></tr>
+    <tr><td>Crypto</td><td>coin<b>-USD</b></td><td><code>BTC-USD</code> <code>ETH-USD</code> <code>SOL-USD</code></td></tr>
+    <tr><td>Forex</td><td>pair<b>=X</b></td><td><code>EURUSD=X</code> <code>GBPUSD=X</code></td></tr>
+    <tr><td>Gold</td><td>ETF</td><td><code>GLD</code></td></tr>
+  </table>
+  <p class="small">Not sure of a symbol? Search for the company on finance.yahoo.com. The symbol is shown next to the name. Run <b>Check setup</b> after any change to make sure every symbol works.</p>
+  <div class="box warn"><b>Keep the spacing in config.yaml</b>Each symbol line starts with two spaces, a dash and a space: <code>&nbsp;&nbsp;- AAPL</code>.</div>
+
+  <h2>Choose a strategy</h2>
+  <p>In <code>config.yaml</code>, change <code>name:</code> under <code>strategy:</code> to one of these:</p>
+  <table>
+    <tr><th>name</th><th>In plain English</th><th>Character</th></tr>
+    <tr><td><code>sma_trend_buffer</code></td><td>Default. Above the 200-day average = in. Sell 3% below it.</td><td>Calm, ~2–3 trades/yr</td></tr>
+    <tr><td><code>trend_or_dip</code></td><td>Same, plus buys sharp dips in uptrends</td><td>Similar, slightly more active</td></tr>
+    <tr><td><code>sma_trend</code></td><td>200-day rule with no buffer</td><td>More whipsaws, ~7 trades/yr</td></tr>
+    <tr><td><code>golden_cross</code></td><td>In while the 50-day average is above the 200-day</td><td>Slow, ~1–2 trades/yr</td></tr>
+    <tr><td><code>momentum_12m</code></td><td>In while the price is higher than 12 months ago</td><td>Medium</td></tr>
+    <tr><td><code>donchian</code></td><td>Buy a 55-day high, sell a 20-day low</td><td>Breakout style, in ~40% of the time</td></tr>
+    <tr><td><code>rsi2_pullback</code></td><td>Buy short, sharp dips in uptrends; sell on the bounce</td><td>Very active, in ~10% of the time</td></tr>
+    <tr><td><code>score</code></td><td>4-indicator score (trend, cross, MACD, RSI)</td><td>Tested worse; included for learning</td></tr>
+  </table>
+
+  <h2>Change the alert time</h2>
+  <p>In <span class="path">.github/workflows/signals.yml</span>, find <code>cron: "37 5 * * *"</code>. The two numbers are the <b>minute</b> and the <b>hour</b>, in UTC. For 07:15 UTC, use <code>"15 7 * * *"</code>.</p>
+  <p class="small">GitHub sometimes starts scheduled runs 10–30 minutes late when it's busy.</p>
+</section>
+
+<!-- ======================= 9 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 9</div>
+  <h1>Backtesting</h1>
+  <p>A backtest replays a strategy over past prices to see how it <i>would</i> have done. It's the closest thing you'll get to a test drive.</p>
+  <h2>Run one</h2>
+  <div class="step"><div class="n">1</div><div class="t">Go to Actions → <b>Backtest</b> → <b>Run workflow</b>.</div></div>
+  <div class="step"><div class="n">2</div><div class="t">Choose a period (10 years is a good start) and a strategy, and optionally type some symbols. Then run it.</div></div>
+  <div class="tg"><div class="who">Your bot</div>🧪 <b>Backtest: last 10y</b> · 200-day trend rule (3% buffer)<br><br>
+    <b>Apple (AAPL)</b> (2017–2026, 9.2 yrs)<br>$1,000 following signals → <b>$5,608</b><br>$1,000 buy &amp; hold → <b>$9,379</b><br>Worst drop: signals −36% vs hold −39%<br>56% of 9 trades made money · invested 82% of the time<br>❌ Buy &amp; hold did better</div>
+  <p class="small">This is a real result, run on 15 Nov 2026. Apple rose strongly for most of this period, so buy &amp; hold won. Trend rules usually earn their keep in long crashes, like 2008, rather than in strong bull runs.</p>
+  <h2>How to read it</h2>
+  <ul>
+    <li><b>Final value:</b> what $1,000 would have grown to, after a 0.1% fee per trade.</li>
+    <li><b>Worst drop:</b> the biggest fall from a peak. Ask yourself honestly whether you'd have held on through it.</li>
+    <li><b>Trades that made money:</b> trend rules often win less than half their trades, but the winners are bigger than the losers.</li>
+  </ul>
+  <h2>Don't fool yourself</h2>
+  <div class="box warn"><b>The trap: "curve fitting"</b>If you try enough settings, one will look amazing on the past just by luck. It usually fails afterwards.</div>
+  <p>The <b>Compare strategies</b> workflow avoids this trap. It picks strategies using older data (before 2021), then checks them on newer data they never saw. A strategy is only worth trusting if it holds up on <b>both</b>. That's how the bot's default was chosen (Chapter 1).</p>
+  <p>Results are shown in the run's <b>Summary</b> page on GitHub: open the Actions tab, tap the run, and scroll down.</p>
+</section>
+
+<!-- ======================= 10 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 10</div>
+  <h1>Using signals sensibly</h1>
+  <h2>1. Paper trade first</h2>
+  <p>Most broker and charting apps (for example TradingView) offer a <b>paper trading</b> account that uses pretend money. Follow the signals there for 2–3 months before risking real money.</p>
+  <h2>2. Decide your exit before you enter</h2>
+  <p>Every BUY alert shows a <b>sell trigger</b>. You can also set a <b>stop-loss (SL)</b> order with your broker, which sells automatically if the price falls to a level you choose. It protects you against sudden crashes between daily checks.</p>
+  <h2>3. Size your positions</h2>
+  <ul>
+    <li>Don't put everything into one symbol.</li>
+    <li>A common rule: risk no more than <b>1–2% of your account</b> on any one trade. Risk means the distance from your buy price to your stop.</li>
+  </ul>
+  <h2>4. Know your order types</h2>
+  <table>
+    <tr><th>Order</th><th>What it does</th></tr>
+    <tr><td><b>Market</b></td><td>Buys or sells now, at the current price</td></tr>
+    <tr><td><b>Buy limit</b></td><td>Buys only if the price falls to your limit or lower. It may never fill.</td></tr>
+    <tr><td><b>Stop-loss (SL)</b></td><td>Sells automatically if the price falls to your stop</td></tr>
+    <tr><td><b>Take-profit (TP)</b></td><td>Sells automatically when the price reaches your target</td></tr>
+  </table>
+  <h2>5. Market hours</h2>
+  <p>US stocks trade Monday–Friday, 9:30–16:00 New York time. Crypto trades 24/7, and forex 24/5. An order placed at a weekend waits until the market opens.</p>
+  <div class="box warn"><b>Avoid:</b> borrowing to trade; leverage you don't understand; "guaranteed profit" groups (including anyone selling signals from this bot, which the licence forbids).</div>
+</section>
+
+<!-- ======================= 11 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 11</div>
+  <h1>Troubleshooting</h1>
+  <p>First, open the <b>Actions</b> tab, tap the failed run (❌), then tap the red step to read the error.</p>
+  <table>
+    <tr><th>What you see</th><th>Fix</th></tr>
+    <tr><td>"TELEGRAM_BOT_TOKEN and/or TELEGRAM_CHAT_ID secret is missing or empty"</td><td>A secret is missing or misspelled. Go to Settings → Secrets and variables → Actions and check both names exactly (Chapter 6).</td></tr>
+    <tr><td>"Forbidden: the bot can't send messages to the bot"</td><td>You used the bot's ID as your chat ID. Get <b>your</b> Id from @userinfobot and update <code>TELEGRAM_CHAT_ID</code>.</td></tr>
+    <tr><td>"Forbidden: bot was blocked by the user" or "chat not found"</td><td>Open your bot in Telegram, tap <b>Start</b> or send "hi", then run again.</td></tr>
+    <tr><td>"Unauthorized" (401)</td><td>The token is wrong or was revoked. Paste the <b>whole</b> current token from BotFather into <code>TELEGRAM_BOT_TOKEN</code>.</td></tr>
+    <tr><td>"Connection reset" / network error</td><td>A temporary glitch. The bot retries automatically; just run it again.</td></tr>
+    <tr><td>"No data returned for XYZ"</td><td>Wrong symbol. Check it on finance.yahoo.com (Chapter 8).</td></tr>
+    <tr><td>Workflow missing from the Actions tab</td><td>The workflow file is in the wrong place. It must be exactly <span class="path">.github/workflows/name.yml</span>, with the dot (Chapter 5.4).</td></tr>
+    <tr><td>"Invalid workflow file"</td><td>The spacing got changed. Delete the file and paste it again from the kit's .txt file.</td></tr>
+    <tr><td>The bot doesn't reply to my messages</td><td>That's normal. It only sends alerts.</td></tr>
+    <tr><td>No message today</td><td>Nothing changed, or GitHub is running late. Scheduled runs can be delayed by up to 30 minutes.</td></tr>
+    <tr><td>Scheduled runs stopped after a few weeks</td><td>GitHub pauses schedules in repos with no activity for 60 days. Open Actions → Trading signals → <b>Enable workflow</b>.</td></tr>
+  </table>
+  <div class="box tip"><b>Shared your token by accident?</b>Send <code>/revoke</code> to @BotFather, choose your bot, and paste the new token into the <code>TELEGRAM_BOT_TOKEN</code> secret.</div>
+</section>
+
+<!-- ======================= 12 ======================= -->
+<section class="chapter">
+  <div class="kicker">Chapter 12</div>
+  <h1>Glossary</h1>
+  <table>
+    <tr><td><b>200-day average (SMA)</b></td><td>The average closing price over the last 200 trading days. It shows the long-term trend.</td></tr>
+    <tr><td><b>Backtest</b></td><td>Testing a strategy on past prices</td></tr>
+    <tr><td><b>Buy &amp; hold</b></td><td>Buying once and never selling. The benchmark to beat.</td></tr>
+    <tr><td><b>Candle / daily close</b></td><td>One day's price data; the close is the last price of the day</td></tr>
+    <tr><td><b>Drawdown</b></td><td>A fall from a previous peak, e.g. −38%</td></tr>
+    <tr><td><b>Golden / death cross</b></td><td>When the 50-day average crosses above (golden) or below (death) the 200-day</td></tr>
+    <tr><td><b>Repository (repo)</b></td><td>A project folder on GitHub</td></tr>
+    <tr><td><b>Secret</b></td><td>An encrypted setting on GitHub, such as your bot token</td></tr>
+    <tr><td><b>Sharpe ratio</b></td><td>Return per unit of risk. Higher is better.</td></tr>
+    <tr><td><b>Whipsaw</b></td><td>Being bounced in and out by prices hovering around a signal line</td></tr>
+    <tr><td><b>Workflow</b></td><td>A set of instructions GitHub runs on a schedule or when you press Run</td></tr>
+  </table>
+  <h2>Disclaimer</h2>
+  <p class="small">This guide and kit are for education only and are not financial advice. Past performance, including all backtests shown, doesn't guarantee future results. Trading involves risk of loss. The authors accept no liability for losses. See DISCLAIMER.md and LICENSE.txt in the kit. Personal use only; don't share or resell this guide or kit.</p>
+  <p class="small">© 2026 {{BRAND}}</p>
+</section>
+
+</body>
+</html>
