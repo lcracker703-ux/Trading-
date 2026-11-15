@@ -3,42 +3,42 @@
     "action": "BUY",
     "date": "2026-11-13",
     "price": 356.2699890136719,
-    "score": 3
+    "strategy": "sma_trend_buffer"
   },
   "BTC-USD": {
-    "action": "HOLD",
+    "action": "SELL",
     "date": "2026-11-14",
     "price": 64128.05078125,
-    "score": 0
+    "strategy": "sma_trend_buffer"
   },
   "ETH-USD": {
-    "action": "HOLD",
+    "action": "SELL",
     "date": "2026-11-14",
     "price": 1769.1204833984375,
-    "score": 0
+    "strategy": "sma_trend_buffer"
   },
   "EURUSD=X": {
     "action": "SELL",
     "date": "2026-11-13",
     "price": 1.1050212383270264,
-    "score": -3
+    "strategy": "sma_trend_buffer"
   },
   "GBPUSD=X": {
-    "action": "SELL",
+    "action": "BUY",
     "date": "2026-11-13",
     "price": 1.3231364488601685,
-    "score": -3
+    "strategy": "sma_trend_buffer"
   },
   "MSFT": {
-    "action": "HOLD",
+    "action": "BUY",
     "date": "2026-11-13",
     "price": 523.8800048828125,
-    "score": 1
+    "strategy": "sma_trend_buffer"
   },
   "SPY": {
-    "action": "HOLD",
+    "action": "BUY",
     "date": "2026-11-13",
     "price": 754.3699951171875,
-    "score": 1
+    "strategy": "sma_trend_buffer"
   }
 }
