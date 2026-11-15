@@ -36,32 +36,27 @@ def display_name(symbol: str) -> str:
     return symbol
 
 
-STRENGTH = {2: "Moderate", 3: "Strong", 4: "Very strong"}
-
-
-def format_signal(sig: Signal, previous: str | None = None) -> str:
+def format_signal(sig: Signal, previous: str | None = None, strategy: str = "") -> str:
     name = display_name(sig.symbol)
-    strength = STRENGTH.get(abs(sig.score), "Weak")
     if sig.action == BUY:
-        head = f"🟢 *Time to BUY {name}*"
-        verb = "Consider buying"
+        lines = [f"🟢 *Time to BUY {name}*", f"Consider buying at around {fmt_price(sig.price)}"]
     else:
-        head = f"🔴 *Time to SELL {name}*"
-        verb = "Consider selling (or not buying)"
-    lines = [
-        head,
-        f"{verb} at around {fmt_price(sig.price)}",
-        f"Signal strength: {strength} ({sig.agree} of 4 checks agree)",
-        "",
-        "*Why:*",
-        *[f"• {r}" for r in sig.reasons],
-    ]
-    if previous:
-        lines += ["", f"_Was {previous} before. Based on the {sig.date} daily close._"]
-    else:
-        lines += ["", f"_Based on the {sig.date} daily close._"]
+        lines = [f"🔴 *Time to SELL {name}*",
+                 f"Consider selling (or staying out) at around {fmt_price(sig.price)}"]
+    lines += ["", "*Why:*", *[f"• {r}" for r in sig.reasons], ""]
+    meta = f"Based on the {sig.date} daily close"
+    if strategy:
+        meta += f" · strategy: {strategy}"
+    lines.append(f"_{meta}._")
     lines.append("_Not financial advice. Do your own checks before trading._")
     return "\n".join(lines)
+
+
+def summary_line(sig: Signal) -> str:
+    status = "BUY / hold" if sig.action == BUY else "SELL / stay out"
+    trigger = next((r for r in sig.reasons if "trigger" in r), "")
+    extra = " · " + trigger.replace("a daily close", "close") if trigger else ""
+    return f"{EMOJI.get(sig.action, '⚪')} {display_name(sig.symbol)}: *{status}* @ {fmt_price(sig.price)}{extra}"
 
 
 def send(text: str) -> bool:
@@ -85,6 +80,16 @@ def send(text: str) -> bool:
             if resp.ok:
                 return True
             last_err = f"{resp.status_code}: {resp.text}"
+            if resp.status_code == 400 and "parse" in resp.text.lower():
+                # Formatting problem (e.g. a stray * or _): resend as plain text
+                resp = requests.post(
+                    f"https://api.telegram.org/bot{token}/sendMessage",
+                    json={"chat_id": chat_id, "text": text.replace("*", "").replace("_", "")},
+                    timeout=20,
+                )
+                if resp.ok:
+                    return True
+                last_err = f"{resp.status_code}: {resp.text}"
             if resp.status_code < 500 and resp.status_code != 429:
                 break  # bad token / chat id: retrying won't help
         time.sleep(2 ** attempt)

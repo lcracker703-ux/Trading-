@@ -114,3 +114,79 @@ STRATEGIES = {
     "rsi2_pullback": rsi2_pullback,
     "trend_or_dip": trend_or_dip,
 }
+
+
+# ---------------------------------------------------------------------------
+# Live signals: explain the latest bar in plain English
+# ---------------------------------------------------------------------------
+TITLES = {
+    "sma_trend_buffer": "200-day trend rule (3% buffer)",
+    "sma_trend": "200-day trend rule",
+    "trend_or_dip": "Trend + dip buying",
+    "golden_cross": "Golden cross (50/200)",
+    "momentum_12m": "12-month momentum",
+    "donchian": "Breakout (55/20 day)",
+    "rsi2_pullback": "Short-term dip buying",
+    "score": "4-indicator score",
+    "buy_hold": "Buy and hold",
+}
+
+
+def _fmt(p: float) -> str:
+    return f"{p:,.0f}" if p >= 1000 else f"{p:,.2f}" if p >= 10 else f"{p:.4f}"
+
+
+def _trend_lines(row, invested: bool, band: float) -> list[str]:
+    pct = row.Close / row.sma - 1
+    lines = [f"Price is {abs(pct):.1%} {'above' if pct >= 0 else 'below'} its 200-day average ({_fmt(row.sma)})"]
+    if invested:
+        lines.append(f"Sell trigger: a daily close below {_fmt(row.sma * (1 - band))}")
+    else:
+        lines.append(f"Buy trigger: a daily close above {_fmt(row.sma)}")
+    return lines
+
+
+def explain(name: str, out: pd.DataFrame) -> list[str]:
+    row = out.iloc[-1]
+    invested = row.position == 1
+    if name in ("sma_trend_buffer", "trend_or_dip"):
+        return _trend_lines(row, invested, 0.03)
+    if name == "sma_trend":
+        return _trend_lines(row, invested, 0.0)
+    if name == "golden_cross":
+        return [f"50-day average {'above' if row.sma_fast > row.sma_slow else 'below'} 200-day "
+                f"({_fmt(row.sma_fast)} vs {_fmt(row.sma_slow)})"]
+    if name == "momentum_12m":
+        return [f"Price is {row.mom:+.1%} vs 12 months ago"]
+    if name == "rsi2_pullback":
+        return [f"Short-term RSI(2) is {row.rsi2:.0f}; 200-day average {_fmt(row.sma)}"]
+    if name == "donchian":
+        hi = out["Close"].rolling(55).max().iloc[-2]
+        lo = out["Close"].rolling(20).min().iloc[-2]
+        return [f"Buy trigger: close above {_fmt(hi)} (55-day high)" if not invested
+                else f"Sell trigger: close below {_fmt(lo)} (20-day low)"]
+    if name == "score":
+        return [f"Indicator score {int(row.score):+d} of 4"]
+    return []
+
+
+def latest(symbol: str, df: pd.DataFrame, name: str):
+    """Signal for the most recent completed bar, or None if not enough history."""
+    from .strategy import Signal
+
+    out = STRATEGIES[name](df).dropna(subset=["position"])
+    if out.empty:
+        return None
+    row = out.iloc[-1]
+    changed = len(out) > 1 and out["position"].iloc[-2] != row.position
+    reasons = explain(name, out)
+    if changed:
+        reasons.insert(0, "Signal changed at today's close")
+    return Signal(
+        symbol=symbol,
+        action=BUY if row.position == 1 else SELL,
+        score=0,
+        price=float(row.Close),
+        date=str(pd.Timestamp(out.index[-1]).date()),
+        reasons=reasons,
+    )

@@ -1,7 +1,8 @@
-# Watchlist — any Yahoo Finance symbol works.
-#   Stocks/ETFs: AAPL, MSFT, SPY
-#   Crypto:      BTC-USD, ETH-USD
-#   Forex:       EURUSD=X, GBPUSD=X
+# ─── Watchlist ──────────────────────────────────────────────────────────────
+# Any Yahoo Finance symbol works (search finance.yahoo.com to find one):
+#   Stocks/ETFs: AAPL, MSFT, SPY, QQQ, VUSA.L (London), NPN.JO (Johannesburg)
+#   Crypto:      BTC-USD, ETH-USD, SOL-USD
+#   Forex:       EURUSD=X, GBPUSD=X        Gold: GLD
 watchlist:
   - AAPL
   - MSFT
@@ -11,17 +12,14 @@ watchlist:
   - EURUSD=X
   - GBPUSD=X
 
-# Indicator settings (daily bars)
+# ─── Strategy ───────────────────────────────────────────────────────────────
+# sma_trend_buffer (default, recommended): hold while price is above its
+#   200-day average; sell only if it closes 3% below it. Aims to sidestep big
+#   crashes, not to beat the market. See README for test results.
+# Other options: sma_trend, trend_or_dip, golden_cross, momentum_12m,
+#   donchian, rsi2_pullback, score
 strategy:
-  sma_fast: 50
-  sma_slow: 200
-  rsi_period: 14
-  rsi_oversold: 30
-  rsi_overbought: 70
-  macd_fast: 12
-  macd_slow: 26
-  macd_signal: 9
-  buy_threshold: 2    # score >= this -> BUY
-  sell_threshold: -2  # score <= this -> SELL
+  name: sma_trend_buffer
 
+# How much daily history to download (needs at least ~1 year for 200-day rules)
 history_period: 2y

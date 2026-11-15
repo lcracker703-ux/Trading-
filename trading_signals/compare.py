@@ -41,7 +41,7 @@ def metrics(close: pd.Series, position: pd.Series, fee: float = 0.001, ppy: floa
 
 def evaluate(df: pd.DataFrame, split: str) -> dict:
     """{strategy: {"train": metrics, "test": metrics}} for one symbol."""
-    ppy = 365 if (df.index.dayofweek >= 5).any() else 252  # crypto trades weekends
+    ppy = 365 if (df.index.day_of_week >= 5).any() else 252  # crypto trades weekends
     res = {}
     for name, fn in STRATEGIES.items():
         p = fn(df)

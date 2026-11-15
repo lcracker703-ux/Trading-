@@ -9,21 +9,14 @@ import pandas as pd
 import yaml
 
 from . import notify
-from .strategy import BUY, SELL, StrategyConfig, analyze
+from .strategies import STRATEGIES, TITLES
 
 
-def backtest(df: pd.DataFrame, cfg: StrategyConfig, fee: float = 0.001) -> dict:
-    # Start once indicators are ready (needs ~200 days), so both sides cover the same period
-    a = analyze(df, cfg).dropna(subset=["action"])
-    pos, positions = 0, []
-    for act in a["action"]:
-        if act == BUY:
-            pos = 1
-        elif act == SELL:
-            pos = 0
-        positions.append(pos)
+def backtest(df: pd.DataFrame, name: str = "sma_trend_buffer", fee: float = 0.001) -> dict:
+    # Start once the strategy has enough history, so both sides cover the same period
+    a = STRATEGIES[name](df).dropna(subset=["position"])
     # Act on the next bar (signal known only at the close)
-    position = pd.Series(positions, index=a.index, dtype=float).shift(1).fillna(0)
+    position = a["position"].shift(1).fillna(0)
     ret = a["Close"].pct_change().fillna(0)
     trades = position.diff().abs().fillna(0)
     strat = position * ret - trades * fee
@@ -77,13 +70,14 @@ def main():
     p.add_argument("--period", default="10y")
     p.add_argument("--config", default="config.yaml")
     p.add_argument("--telegram", action="store_true", help="send results to Telegram")
+    p.add_argument("--strategy", default=None, help="override the strategy in config.yaml")
     a = p.parse_args()
     cfg = yaml.safe_load(open(a.config))
-    strat = StrategyConfig.from_dict(cfg.get("strategy"))
+    name = a.strategy or (cfg.get("strategy") or {}).get("name", "sma_trend_buffer")
     blocks, beat, n = [], 0, 0
     for s in a.symbols or cfg["watchlist"]:
         try:
-            r = backtest(fetch_daily(s, a.period), strat)
+            r = backtest(fetch_daily(s, a.period), name)
         except Exception as e:
             blocks.append(f"*{s}*: couldn't test ({e})")
             continue
@@ -91,7 +85,7 @@ def main():
         beat += r["strategy_return"] > r["buy_hold_return"]
         blocks.append(format_result(s, r))
     text = (
-        f"🧪 *Backtest: last {a.period}*\n_Buy on BUY, sell on SELL, 0.1% fee per trade_\n\n"
+        f"🧪 *Backtest: last {a.period}* · {TITLES.get(name, name)}\n_Buy on BUY, sell on SELL, 0.1% fee per trade_\n\n"
         + "\n\n".join(blocks)
         + f"\n\n*Overall:* signals beat buy & hold on {beat} of {n} symbols.\n"
         "_Past results don't guarantee future returns._"

@@ -54,7 +54,7 @@ def test_drop_incomplete_bar():
 def test_backtest_runs():
     from trading_signals.backtest import format_result
 
-    r = backtest(frame(trend(True)), StrategyConfig())
+    r = backtest(frame(trend(True)), "score")
     assert r["trades"] >= 1 and r["strategy_return"] > 0
     assert r["years"] < 1.2  # starts after the 200-day warm-up
     assert "$1,000 buy & hold" in format_result("AAPL", r)
@@ -62,16 +62,49 @@ def test_backtest_runs():
 
 def test_run_alerts_only_on_change(tmp_path, monkeypatch):
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
+    sent = []
+    monkeypatch.setattr("trading_signals.notify.send", lambda t: sent.append(t) or False)
     cfg = tmp_path / "c.yaml"
     cfg.write_text("watchlist: [UP, DN]\n")
     state = tmp_path / "s.json"
     data = {"UP": frame(trend(True)), "DN": frame(trend(False))}
     fetch = lambda s, p: data[s]
-    assert {a.symbol for a in run(str(cfg), str(state), fetch=fetch)} == {"UP", "DN"}
+    # First run: no per-symbol alerts, just a "now tracking" summary
+    assert run(str(cfg), str(state), fetch=fetch) == []
+    assert len(sent) == 1 and "Now tracking" in sent[0]
     assert run(str(cfg), str(state), fetch=fetch) == []  # no change -> no alert
     data["UP"] = frame(trend(False, seed=5))
-    assert [a.action for a in run(str(cfg), str(state), fetch=fetch)] == [SELL]
+    alerts = run(str(cfg), str(state), fetch=fetch)
+    assert [a.action for a in alerts] == [SELL] and "Time to SELL" in sent[-1]
     assert json.loads(state.read_text())["UP"]["action"] == SELL
+
+
+def test_every_strategy_runs_and_explains():
+    from trading_signals.strategies import STRATEGIES, latest
+
+    for name in STRATEGIES:
+        for up in (True, False):
+            sig = latest("AAPL", frame(trend(up, n=400)), name)
+            assert sig is not None and sig.action in (BUY, SELL), name
+
+
+def test_trend_rule_gives_trigger_levels():
+    from trading_signals.notify import format_signal, summary_line
+    from trading_signals.strategies import latest
+
+    up = latest("AAPL", frame(trend(True)), "sma_trend_buffer")
+    dn = latest("AAPL", frame(trend(False)), "sma_trend_buffer")
+    assert up.action == BUY and any("Sell trigger" in r for r in up.reasons)
+    assert dn.action == SELL and any("Buy trigger" in r for r in dn.reasons)
+    assert "Time to BUY Apple (AAPL)" in format_signal(up)
+    assert "sell trigger" in summary_line(up).lower()
+
+
+def test_compare_runs():
+    from trading_signals.compare import evaluate, summarise
+
+    r = {"X": evaluate(frame(trend(True, n=1500)), "2024-01-01")}
+    assert "sma_trend_buffer" in summarise(r)
 
 
 def test_send_retries_network_errors(monkeypatch):

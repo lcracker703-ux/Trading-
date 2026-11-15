@@ -8,6 +8,11 @@ on:
         type: choice
         options: [10y, 5y, 3y, 20y, max]
         default: 10y
+      strategy:
+        description: "Strategy to test"
+        type: choice
+        options: [config.yaml setting, sma_trend_buffer, sma_trend, trend_or_dip, golden_cross, momentum_12m, donchian, rsi2_pullback, score]
+        default: config.yaml setting
       symbols:
         description: "Symbols to test (space separated). Leave blank for the whole watchlist"
         type: string
@@ -29,4 +34,8 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PERIOD: ${{ inputs.period }}
           SYMBOLS: ${{ inputs.symbols }}
-        run: python -m trading_signals.backtest $SYMBOLS --period "$PERIOD" --telegram
+          STRATEGY: ${{ inputs.strategy }}
+        run: |
+          ARGS=()
+          [ "$STRATEGY" != "config.yaml setting" ] && ARGS+=(--strategy "$STRATEGY")
+          python -m trading_signals.backtest $SYMBOLS --period "$PERIOD" "${ARGS[@]}" --telegram
