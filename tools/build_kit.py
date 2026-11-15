@@ -11,7 +11,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BRAND = "Tom's Trading"  # change to your shop/brand name, then rebuild
+BRAND = "Trading Bot"  # change to your shop/brand name, then rebuild
 DIST = ROOT / "course" / "dist"
 KIT = DIST / "Trading-Bot-Kit"
 

@@ -6,7 +6,7 @@ const path = require('path');
 
 (async () => {
   const root = path.resolve(__dirname, '..');
-  const brand = process.argv[2] || "Tom's Trading";
+  const brand = process.argv[2] || "Trading Bot";
   const html = fs.readFileSync(path.join(root, 'course/guide.html'), 'utf8').replaceAll('{{BRAND}}', brand);
   const out = path.join(root, 'course/dist');
   fs.mkdirSync(out, { recursive: true });
