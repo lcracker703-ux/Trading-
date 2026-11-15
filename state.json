@@ -1,0 +1,26 @@
+{
+  "BTC-USD": {
+    "action": "HOLD",
+    "date": "2026-11-14",
+    "price": 64128.05078125,
+    "score": 0
+  },
+  "ETH-USD": {
+    "action": "HOLD",
+    "date": "2026-11-14",
+    "price": 1769.1204833984375,
+    "score": 0
+  },
+  "MSFT": {
+    "action": "HOLD",
+    "date": "2026-11-13",
+    "price": 523.8800048828125,
+    "score": 1
+  },
+  "SPY": {
+    "action": "HOLD",
+    "date": "2026-11-13",
+    "price": 754.3699951171875,
+    "score": 1
+  }
+}
