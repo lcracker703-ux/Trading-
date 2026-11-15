@@ -1,0 +1,50 @@
+name: Trading signals
+
+on:
+  schedule:
+    # Daily at 00:37 UTC — after the US stock close and the crypto/forex daily candle close
+    - cron: "37 0 * * *"
+  workflow_dispatch:
+    inputs:
+      report:
+        description: "Also send a full summary of every symbol"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write   # to commit state.json (remembers last signal per symbol)
+
+concurrency:
+  group: trading-signals
+  cancel-in-progress: false
+
+jobs:
+  signals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Analyse watchlist and send alerts
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python -m trading_signals.main ${{ (github.event_name == 'workflow_dispatch' && inputs.report) && '--report' || '' }}
+      - name: Save signal state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || { git commit -m "Update signal state [skip ci]" && git push; }
+
+  tests:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt pytest && pytest -q

@@ -1,0 +1,27 @@
+# Watchlist — any Yahoo Finance symbol works.
+#   Stocks/ETFs: AAPL, MSFT, SPY
+#   Crypto:      BTC-USD, ETH-USD
+#   Forex:       EURUSD=X, GBPUSD=X
+watchlist:
+  - AAPL
+  - MSFT
+  - SPY
+  - BTC-USD
+  - ETH-USD
+  - EURUSD=X
+  - GBPUSD=X
+
+# Indicator settings (daily bars)
+strategy:
+  sma_fast: 50
+  sma_slow: 200
+  rsi_period: 14
+  rsi_oversold: 30
+  rsi_overbought: 70
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  buy_threshold: 2    # score >= this -> BUY
+  sell_threshold: -2  # score <= this -> SELL
+
+history_period: 2y
