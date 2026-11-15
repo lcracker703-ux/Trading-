@@ -10,8 +10,8 @@ Get a Telegram message when a stock, ETF, crypto or forex pair turns **BUY** or 
 > Consider buying at around 356.27
 >
 > **Why:**
-> • Price is 8.4% above its 200-day average (328.70)
-> • Sell trigger: a daily close below 318.84
+> • Price is 18.5% above its 200-day average (300.77)
+> • Sell trigger: a daily close below 291.75
 >
 > _Based on the 2026-11-13 daily close · strategy: 200-day trend rule (3% buffer)._
 
