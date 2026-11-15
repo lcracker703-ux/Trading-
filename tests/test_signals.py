@@ -52,8 +52,12 @@ def test_drop_incomplete_bar():
 
 
 def test_backtest_runs():
+    from trading_signals.backtest import format_result
+
     r = backtest(frame(trend(True)), StrategyConfig())
     assert r["trades"] >= 1 and r["strategy_return"] > 0
+    assert r["years"] < 1.2  # starts after the 200-day warm-up
+    assert "$1,000 buy & hold" in format_result("AAPL", r)
 
 
 def test_run_alerts_only_on_change(tmp_path, monkeypatch):

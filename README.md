@@ -32,6 +32,13 @@ You get an alert only when a symbol **changes** into BUY or SELL, so the same si
    - Forex: `EURUSD=X`
 5. **Test it.** Go to Actions → *Trading signals* → **Run workflow**. You should receive a full summary in Telegram. After that, it runs automatically every day at 05:37 UTC and sends a daily summary, plus a "Time to BUY / SELL" alert whenever a signal changes.
 
+## Backtest (does this actually work?)
+
+Go to Actions → **Backtest** → **Run workflow**. It replays the BUY/SELL rules over the last 10 years (or 3, 5, 20 or max) of your watchlist and sends you the results in Telegram. For each symbol you get:
+- what $1,000 would have become by following the signals, compared with buying and holding
+- the worst drop along the way
+- the share of trades that made money
+
 ## Run locally
 
 ```bash
