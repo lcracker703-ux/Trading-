@@ -36,7 +36,7 @@ def run(config_path: str, state_path: str, report: bool = False, fetch=data.fetc
             errors.append(f"{symbol}: not enough history")
             continue
         prev = state.get(symbol, {}).get("action")
-        summary.append(f"{notify.EMOJI.get(sig.action, '⚪')} {symbol}: {sig.action} ({sig.score:+d}) @ {notify.fmt_price(sig.price)}")
+        summary.append(f"{notify.EMOJI.get(sig.action, '⚪')} {notify.display_name(symbol)}: {sig.action} ({sig.score:+d}) @ {notify.fmt_price(sig.price)}")
         # Alert on a change into BUY or SELL (first run seeds state without spamming HOLDs)
         if sig.action != prev and sig.action != HOLD:
             sent = notify.send(notify.format_signal(sig, prev))

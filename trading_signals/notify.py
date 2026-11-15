@@ -21,12 +21,46 @@ def fmt_price(p: float) -> str:
     return f"{p:.4f}"
 
 
+NAMES = {
+    "AAPL": "Apple", "MSFT": "Microsoft", "SPY": "S&P 500 ETF", "TSLA": "Tesla",
+    "NVDA": "Nvidia", "AMZN": "Amazon", "GOOGL": "Google", "META": "Meta",
+    "BTC-USD": "Bitcoin", "ETH-USD": "Ethereum", "SOL-USD": "Solana", "GC=F": "Gold",
+}
+
+
+def display_name(symbol: str) -> str:
+    if symbol in NAMES:
+        return f"{NAMES[symbol]} ({symbol})"
+    if symbol.endswith("=X") and len(symbol) == 8:
+        return f"{symbol[:3]}/{symbol[3:6]}"
+    return symbol
+
+
+STRENGTH = {2: "Moderate", 3: "Strong", 4: "Very strong"}
+
+
 def format_signal(sig: Signal, previous: str | None = None) -> str:
-    head = f"{EMOJI.get(sig.action, '⚪')} *{sig.action}* {sig.symbol} @ {fmt_price(sig.price)}"
-    lines = [head, f"Score {sig.score:+d}/4 · bar {sig.date}"]
+    name = display_name(sig.symbol)
+    strength = STRENGTH.get(abs(sig.score), "Weak")
+    if sig.action == BUY:
+        head = f"🟢 *Time to BUY {name}*"
+        verb = "Consider buying"
+    else:
+        head = f"🔴 *Time to SELL {name}*"
+        verb = "Consider selling (or not buying)"
+    lines = [
+        head,
+        f"{verb} at around {fmt_price(sig.price)}",
+        f"Signal strength: {strength} ({sig.agree} of 4 checks agree)",
+        "",
+        "*Why:*",
+        *[f"• {r}" for r in sig.reasons],
+    ]
     if previous:
-        lines.append(f"Changed from {previous}")
-    lines += [f"• {r}" for r in sig.reasons]
+        lines += ["", f"_Was {previous} before. Based on the {sig.date} daily close._"]
+    else:
+        lines += ["", f"_Based on the {sig.date} daily close._"]
+    lines.append("_Not financial advice. Do your own checks before trading._")
     return "\n".join(lines)
 
 

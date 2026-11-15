@@ -44,6 +44,7 @@ class Signal:
     date: str
     reasons: list[str] = field(default_factory=list)
     rsi: float | None = None
+    agree: int = 0  # how many of the 4 checks point the same way as the signal
 
 
 def _sign(cond_pos: pd.Series, cond_neg: pd.Series) -> pd.Series:
@@ -78,20 +79,26 @@ def latest_signal(symbol: str, df: pd.DataFrame, cfg: StrategyConfig) -> Signal 
     if a.empty:
         return None
     row, prev = a.iloc[-1], a.iloc[-2] if len(a) > 1 else None
-    reasons = []
-    reasons.append(
-        f"Price {'above' if row.s_trend > 0 else 'below'} {cfg.sma_slow}-day SMA "
-        f"({'uptrend' if row.s_trend > 0 else 'downtrend'})"
-    )
-    regime = "golden cross" if row.s_cross > 0 else "death cross"
-    just = prev is not None and prev.s_cross != row.s_cross
-    reasons.append(f"{cfg.sma_fast}/{cfg.sma_slow} SMA: {regime}{' (just crossed!)' if just else ''}")
-    mjust = prev is not None and prev.s_macd != row.s_macd
-    reasons.append(
-        f"MACD {'bullish' if row.s_macd > 0 else 'bearish'}{' (fresh crossover)' if mjust else ''}"
-    )
-    rsi_txt = "oversold" if row.s_rsi > 0 else "overbought" if row.s_rsi < 0 else "neutral"
-    reasons.append(f"RSI {row.rsi:.1f} ({rsi_txt})")
+    reasons = [
+        "Long-term trend is UP (price above its 200-day average)" if row.s_trend > 0
+        else "Long-term trend is DOWN (price below its 200-day average)",
+    ]
+    cross_just = prev is not None and prev.s_cross != row.s_cross
+    if row.s_cross > 0:
+        reasons.append("Golden cross" + (" just happened" if cross_just else "") + " (50-day average above 200-day)")
+    elif row.s_cross < 0:
+        reasons.append("Death cross" + (" just happened" if cross_just else "") + " (50-day average below 200-day)")
+    macd_just = prev is not None and prev.s_macd != row.s_macd
+    if row.s_macd > 0:
+        reasons.append("Momentum is rising" + (" (just turned up)" if macd_just else ""))
+    elif row.s_macd < 0:
+        reasons.append("Momentum is falling" + (" (just turned down)" if macd_just else ""))
+    if row.s_rsi > 0:
+        reasons.append(f"Oversold, may bounce (RSI {row.rsi:.0f})")
+    elif row.s_rsi < 0:
+        reasons.append(f"Overbought, may pull back (RSI {row.rsi:.0f})")
+    else:
+        reasons.append(f"Not overbought or oversold (RSI {row.rsi:.0f})")
     return Signal(
         symbol=symbol,
         action=row.action,
@@ -100,4 +107,6 @@ def latest_signal(symbol: str, df: pd.DataFrame, cfg: StrategyConfig) -> Signal 
         date=str(pd.Timestamp(a.index[-1]).date()),
         reasons=reasons,
         rsi=float(row.rsi),
+        agree=int(sum(1 for c in ("s_trend", "s_cross", "s_macd", "s_rsi")
+                      if row[c] != 0 and (row[c] > 0) == (row.score > 0))),
     )
