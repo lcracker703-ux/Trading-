@@ -68,3 +68,25 @@ def test_run_alerts_only_on_change(tmp_path, monkeypatch):
     data["UP"] = frame(trend(False, seed=5))
     assert [a.action for a in run(str(cfg), str(state), fetch=fetch)] == [SELL]
     assert json.loads(state.read_text())["UP"]["action"] == SELL
+
+
+def test_send_retries_network_errors(monkeypatch):
+    import requests
+    from trading_signals import notify
+
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "x")
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "1")
+    monkeypatch.setattr(notify.time, "sleep", lambda s: None)
+    calls = []
+
+    class Ok:
+        ok, status_code, text = True, 200, ""
+
+    def post(*a, **k):
+        calls.append(1)
+        if len(calls) < 3:
+            raise requests.ConnectionError("reset")
+        return Ok()
+
+    monkeypatch.setattr(notify.requests, "post", post)
+    assert notify.send("hi") is True and len(calls) == 3
