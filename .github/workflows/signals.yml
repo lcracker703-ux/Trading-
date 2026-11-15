@@ -2,8 +2,9 @@ name: Trading signals
 
 on:
   schedule:
-    # Daily at 00:37 UTC — after the US stock close and the crypto/forex daily candle close
-    - cron: "37 0 * * *"
+    # Daily at 05:37 UTC (07:37 in UTC+2) — after the US stock close and the
+    # crypto/forex daily candle close. Always sends the daily summary.
+    - cron: "37 5 * * *"
   workflow_dispatch:
     inputs:
       report:
@@ -32,7 +33,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python -m trading_signals.main ${{ (github.event_name == 'workflow_dispatch' && inputs.report) && '--report' || '' }}
+        run: python -m trading_signals.main ${{ (github.event_name == 'schedule' || inputs.report) && '--report' || '' }}
       - name: Save signal state
         if: always()
         run: |

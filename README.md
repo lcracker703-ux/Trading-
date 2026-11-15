@@ -30,7 +30,7 @@ You get an alert only when a symbol **changes** into BUY or SELL, so the same si
    - Stocks: `AAPL`
    - Crypto: `BTC-USD`
    - Forex: `EURUSD=X`
-5. **Test it.** Go to Actions → *Trading signals* → **Run workflow**. You should receive a full summary in Telegram. After that, it runs automatically every day at 00:37 UTC.
+5. **Test it.** Go to Actions → *Trading signals* → **Run workflow**. You should receive a full summary in Telegram. After that, it runs automatically every day at 05:37 UTC and sends a daily summary, plus a "Time to BUY / SELL" alert whenever a signal changes.
 
 ## Run locally
 
