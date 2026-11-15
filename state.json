@@ -1,4 +1,10 @@
 {
+  "AAPL": {
+    "action": "BUY",
+    "date": "2026-11-13",
+    "price": 356.2699890136719,
+    "score": 3
+  },
   "BTC-USD": {
     "action": "HOLD",
     "date": "2026-11-14",
@@ -10,6 +16,18 @@
     "date": "2026-11-14",
     "price": 1769.1204833984375,
     "score": 0
+  },
+  "EURUSD=X": {
+    "action": "SELL",
+    "date": "2026-11-13",
+    "price": 1.1050212383270264,
+    "score": -3
+  },
+  "GBPUSD=X": {
+    "action": "SELL",
+    "date": "2026-11-13",
+    "price": 1.3231364488601685,
+    "score": -3
   },
   "MSFT": {
     "action": "HOLD",
