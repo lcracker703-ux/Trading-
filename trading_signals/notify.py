@@ -8,8 +8,20 @@ from .strategy import BUY, SELL, Signal
 EMOJI = {BUY: "🟢", SELL: "🔴"}
 
 
+def configured() -> bool:
+    return bool(os.environ.get("TELEGRAM_BOT_TOKEN") and os.environ.get("TELEGRAM_CHAT_ID"))
+
+
+def fmt_price(p: float) -> str:
+    if p >= 1000:
+        return f"{p:,.0f}"
+    if p >= 10:
+        return f"{p:,.2f}"
+    return f"{p:.4f}"
+
+
 def format_signal(sig: Signal, previous: str | None = None) -> str:
-    head = f"{EMOJI.get(sig.action, '⚪')} *{sig.action}* {sig.symbol} @ {sig.price:,.4g}"
+    head = f"{EMOJI.get(sig.action, '⚪')} *{sig.action}* {sig.symbol} @ {fmt_price(sig.price)}"
     lines = [head, f"Score {sig.score:+d}/4 · bar {sig.date}"]
     if previous:
         lines.append(f"Changed from {previous}")

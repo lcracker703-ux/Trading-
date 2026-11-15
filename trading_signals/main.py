@@ -5,6 +5,8 @@
 """
 import argparse
 import json
+import os
+import sys
 from pathlib import Path
 
 import yaml
@@ -34,10 +36,13 @@ def run(config_path: str, state_path: str, report: bool = False, fetch=data.fetc
             errors.append(f"{symbol}: not enough history")
             continue
         prev = state.get(symbol, {}).get("action")
-        summary.append(f"{notify.EMOJI.get(sig.action, '⚪')} {symbol}: {sig.action} ({sig.score:+d}) @ {sig.price:,.4g}")
+        summary.append(f"{notify.EMOJI.get(sig.action, '⚪')} {symbol}: {sig.action} ({sig.score:+d}) @ {notify.fmt_price(sig.price)}")
         # Alert on a change into BUY or SELL (first run seeds state without spamming HOLDs)
         if sig.action != prev and sig.action != HOLD:
-            notify.send(notify.format_signal(sig, prev))
+            sent = notify.send(notify.format_signal(sig, prev))
+            if notify.configured() and not sent:
+                errors.append(f"{symbol}: alert failed to send, will retry next run")
+                continue  # don't remember it, so the alert is retried
             alerts.append(sig)
         state[symbol] = {"action": sig.action, "score": sig.score, "date": sig.date, "price": sig.price}
 
@@ -55,6 +60,8 @@ def main():
     p.add_argument("--state", default="state.json")
     p.add_argument("--report", action="store_true", help="send full summary too")
     a = p.parse_args()
+    if os.environ.get("GITHUB_ACTIONS") and not notify.configured():
+        sys.exit("TELEGRAM_BOT_TOKEN and/or TELEGRAM_CHAT_ID secret is missing or empty")
     run(a.config, a.state, a.report)
 
 
