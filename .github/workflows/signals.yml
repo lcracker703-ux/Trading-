@@ -34,6 +34,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python -m trading_signals.main ${{ (github.event_name == 'workflow_dispatch' && inputs.report) && '--report' || '' }}
       - name: Save signal state
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

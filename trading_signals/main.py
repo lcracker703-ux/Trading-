@@ -51,6 +51,8 @@ def run(config_path: str, state_path: str, report: bool = False, fetch=data.fetc
     elif errors:
         print("Errors:\n" + "\n".join(errors))
     state_file.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+    if notify.configured() and any("failed to send" in e for e in errors):
+        raise SystemExit("Some Telegram alerts failed to send — see 'Telegram error' lines above")
     return alerts
 
 
