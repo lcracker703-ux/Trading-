@@ -1,0 +1,15 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1080px;height:1920px;overflow:hidden;font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:#e8eef6;background:#0b1220}
+.bg{position:absolute;inset:0;background:radial-gradient(900px 900px at 90% 10%,rgba(47,210,127,.22),transparent 60%),radial-gradient(900px 900px at 0% 100%,rgba(31,111,235,.25),transparent 60%),#0b1220}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:60px 60px}
+.wrap{position:absolute;left:90px;right:90px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center}
+.k{font-size:40px;letter-spacing:.14em;text-transform:uppercase;color:#2fd27f;font-weight:800}
+.h{font-size:104px;font-weight:900;line-height:1.04;margin:26px 0}
+.s{font-size:46px;line-height:1.4;color:#a8b8cc}
+.g{color:#2fd27f}.r{color:#ff5d5d}
+.tg{background:#17212b;border-radius:28px;padding:34px 38px;font-size:40px;line-height:1.45;box-shadow:0 20px 50px rgba(0,0,0,.45);margin-bottom:30px}
+.tg .who{color:#6ab3f3;font-weight:800;font-size:32px;margin-bottom:10px}
+.tg i{color:#8a9bb0;font-size:30px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:40px 44px;margin-bottom:30px;font-size:44px;line-height:1.35}
+.card b{font-size:52px}
+.foot{position:absolute;bottom:120px;left:0;right:0;text-align:center;font-size:30px;color:#7f90a6}

@@ -1,0 +1,53 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Quick Start</title><style>
+@page{size:A4;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:210mm;height:297mm;font:9.4pt/1.38 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:#1b2430;padding:11mm 13mm;position:relative}
+.top{background:#0b1220;color:#e8eef6;border-radius:8px;padding:5mm 7mm;margin-bottom:4mm}
+.top .k{color:#2fd27f;font-weight:800;letter-spacing:.12em;font-size:8.5pt;text-transform:uppercase}
+.top h1{font-size:17pt;margin:1.5mm 0}.top p{color:#a8b8cc}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.box{border:1px solid #dde3ea;border-radius:7px;padding:3mm 4mm;margin-bottom:3.5mm;break-inside:avoid}
+h2{font-size:10.5pt;margin-bottom:1.5mm}
+ol,ul{padding-left:5mm}li{margin-bottom:.6mm}
+code{font-family:Menlo,Consolas,monospace;font-size:8.6pt;background:#f1f4f8;border:1px solid #dde3ea;border-radius:3px;padding:0 1mm}
+.warn{border-left:4px solid #cf222e;background:#fff6f6}
+.tip{border-left:4px solid #1a7f37}
+table{width:100%;border-collapse:collapse;font-size:8.8pt}td{padding:.7mm 1.2mm;border-bottom:1px solid #eef1f5;vertical-align:top}
+.foot{position:absolute;bottom:7mm;left:13mm;right:13mm;font-size:8pt;color:#6b7685;text-align:center}
+</style></head><body>
+<div class="top"><div class="k">{{BRAND}} · Quick Start</div><h1>Trading Alert Bot: setup on one page</h1><p>Keep this open next to GitHub and Telegram. For the details, see the full guide (chapter numbers in brackets).</p></div>
+<div class="cols"><div>
+<div class="box"><h2>1 · Telegram (5 min) [Ch.4]</h2><ol>
+<li>Open <b>@BotFather</b> → <code>/newbot</code> → name → username ending <code>bot</code></li>
+<li>Copy the <b>token</b> (all of it, including the part after the colon)</li>
+<li>Open <b>@userinfobot</b> → copy your <b>Id</b> number</li>
+<li>Open your new bot → send "hi"</li></ol></div>
+<div class="box"><h2>2 · GitHub (10 min) [Ch.5]</h2><ol>
+<li>New repository → <b>Private</b></li>
+<li>Upload every kit file <b>except</b> the <code>workflows</code> folder</li>
+<li>Add file → Create new file → name <code>.github/workflows/signals.yml</code> → paste <code>1-signals.yml.txt</code></li>
+<li>Repeat for <code>check-setup</code>, <code>backtest</code>, <code>compare</code></li></ol></div>
+<div class="box"><h2>3 · Secrets (2 min) [Ch.6]</h2>
+<p>Settings → Secrets and variables → Actions → New secret</p>
+<table><tr><td><code>TELEGRAM_BOT_TOKEN</code></td><td>whole token</td></tr><tr><td><code>TELEGRAM_CHAT_ID</code></td><td>your Id (digits)</td></tr></table></div>
+<div class="box"><h2>4 · Switch on (2 min) [Ch.7]</h2><ol>
+<li>Actions tab → enable workflows</li><li><b>Check setup</b> → Run workflow → wait for 🔧</li><li><b>Trading signals</b> → Run workflow → wait for 👋</li></ol>
+<p>Then it runs daily at 05:37 UTC.</p></div>
+</div><div>
+<div class="box"><h2>Customise [Ch.8]</h2>
+<p>Edit <code>config.yaml</code> → ✏️ → Commit</p>
+<table><tr><td>US stock</td><td><code>AAPL</code></td></tr><tr><td>London</td><td><code>VUSA.L</code></td></tr><tr><td>Johannesburg</td><td><code>NPN.JO</code></td></tr><tr><td>Crypto</td><td><code>BTC-USD</code></td></tr><tr><td>Forex</td><td><code>EURUSD=X</code></td></tr></table>
+<p style="margin-top:2mm">Strategy: <code>sma_trend_buffer</code> (default). Alert time: <code>cron</code> line in <code>signals.yml</code> (UTC).</p></div>
+<div class="box"><h2>Fix it fast [Ch.11]</h2><table>
+<tr><td>"secret is missing"</td><td>Check the two secret names exactly</td></tr>
+<tr><td>"can't send messages to the bot"</td><td>Use YOUR Id from @userinfobot</td></tr>
+<tr><td>"chat not found" / blocked</td><td>Send "hi" to your bot</td></tr>
+<tr><td>401 Unauthorized</td><td>Paste the whole current token</td></tr>
+<tr><td>"No data returned"</td><td>Wrong symbol; check Yahoo Finance</td></tr>
+<tr><td>Workflow not listed</td><td>Path must start <code>.github/workflows/</code></td></tr>
+<tr><td>Bot doesn't reply</td><td>Normal. It only sends alerts.</td></tr></table></div>
+<div class="box tip"><h2>Use it sensibly [Ch.10]</h2><ul><li>Paper-trade for 2–3 months first</li><li>Set a stop-loss on every trade</li><li>Risk ≤1–2% of your account per trade</li><li>Run the <b>Backtest</b> workflow before you trust a strategy</li></ul></div>
+<div class="box warn"><h2>Keep your token secret</h2><p>Never share it. Leaked? Send <code>/revoke</code> to @BotFather and update the secret.</p></div>
+</div></div>
+<div class="foot">Education only, not financial advice. Personal-use licence: don't share or resell. © 2026 {{BRAND}}</div>
+</body></html>
