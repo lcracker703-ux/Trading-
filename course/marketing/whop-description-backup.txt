@@ -1,0 +1,25 @@
+Tired of staring at charts? Build your own bot that checks the markets for you every day and messages you on Telegram when something changes.
+
+What you get
+
+	•	📘 An 18-page step-by-step PDF guide, written for complete beginners
+	•	🤖 The complete bot (code kit): no coding needed, just upload and paste
+	•	📊 A daily Telegram summary of your watchlist
+	•	🟢🔴 "Time to BUY / SELL" alerts, showing the exact price that would flip the signal
+	•	🧪 Built-in backtesting: see how a strategy would have done over 10+ years before you trust it
+	•	🔀 8 strategies to choose from (trend, momentum, breakout, dip-buying and more)
+	•	🛠 A troubleshooting chapter covering every common error and its fix
+
+Why it's different
+
+	•	$0 running costs. It runs on GitHub's free servers. There's no subscription, no VPS, and your phone doesn't need to be on.
+	•	Works on iPad and phone. Every step was tested with a tablet in mind.
+	•	Honest. We show real test results, including where buy-and-hold did better. No "guaranteed profits" here.
+
+Works with: US, UK and South African stocks and ETFs, crypto (BTC, ETH, SOL…), forex pairs and gold. That covers anything on Yahoo Finance.
+
+You need: a free GitHub account and the free Telegram app.
+
+Disclaimer
+
+For educational purposes only. Not financial advice. Trading involves risk, and you can lose money. Past performance and backtests don't guarantee future results.
