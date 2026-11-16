@@ -1,0 +1,9 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:#e8eef6;background:#0b1220;overflow:hidden}
+.bg{position:absolute;inset:0;background:radial-gradient(1200px 600px at 85% 20%,rgba(38,201,120,.18),transparent 60%),radial-gradient(900px 500px at 10% 100%,rgba(31,111,235,.20),transparent 60%),#0b1220}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px}
+.green{color:#2fd27f}.red{color:#ff5d5d}.muted{color:#9fb0c6}
+.tg{background:#17212b;border-radius:16px;padding:16px 18px;font-size:17px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.35);color:#e8eef6}
+.tg .who{color:#6ab3f3;font-weight:700;font-size:14px;margin-bottom:6px}
+.tg i{color:#8a9bb0;font-size:14px}
+.pill{display:inline-block;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:8px 16px;font-size:18px;margin:0 10px 10px 0;background:rgba(255,255,255,.04)}
