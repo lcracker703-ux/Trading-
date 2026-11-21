@@ -1,44 +1,44 @@
 {
   "AAPL": {
     "action": "BUY",
-    "date": "2026-11-19",
-    "price": 349.2099914550781,
+    "date": "2026-11-20",
+    "price": 342.55999755859375,
     "strategy": "sma_trend_buffer"
   },
   "BTC-USD": {
     "action": "SELL",
-    "date": "2026-11-18",
-    "price": 62987.265625,
+    "date": "2026-11-19",
+    "price": 61901.8203125,
     "strategy": "sma_trend_buffer"
   },
   "ETH-USD": {
     "action": "SELL",
-    "date": "2026-11-18",
-    "price": 1774.7491455078125,
+    "date": "2026-11-19",
+    "price": 1755.1898193359375,
     "strategy": "sma_trend_buffer"
   },
   "EURUSD=X": {
     "action": "SELL",
-    "date": "2026-11-19",
-    "price": 1.0972011089324951,
+    "date": "2026-11-20",
+    "price": 1.0969723463058472,
     "strategy": "sma_trend_buffer"
   },
   "GBPUSD=X": {
     "action": "BUY",
-    "date": "2026-11-19",
-    "price": 1.3146650791168213,
+    "date": "2026-11-20",
+    "price": 1.3086435794830322,
     "strategy": "sma_trend_buffer"
   },
   "MSFT": {
     "action": "BUY",
-    "date": "2026-11-19",
-    "price": 498.29998779296875,
+    "date": "2026-11-20",
+    "price": 484.5199890136719,
     "strategy": "sma_trend_buffer"
   },
   "SPY": {
-    "action": "BUY",
-    "date": "2026-11-19",
-    "price": 715.8699951171875,
+    "action": "SELL",
+    "date": "2026-11-20",
+    "price": 689.8099975585938,
     "strategy": "sma_trend_buffer"
   }
 }
