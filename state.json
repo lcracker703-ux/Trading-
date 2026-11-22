@@ -7,14 +7,14 @@
   },
   "BTC-USD": {
     "action": "SELL",
-    "date": "2026-11-19",
-    "price": 61901.8203125,
+    "date": "2026-11-20",
+    "price": 58798.98046875,
     "strategy": "sma_trend_buffer"
   },
   "ETH-USD": {
     "action": "SELL",
-    "date": "2026-11-19",
-    "price": 1755.1898193359375,
+    "date": "2026-11-20",
+    "price": 1619.43212890625,
     "strategy": "sma_trend_buffer"
   },
   "EURUSD=X": {
