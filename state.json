@@ -7,26 +7,26 @@
   },
   "BTC-USD": {
     "action": "SELL",
-    "date": "2026-11-24",
-    "price": 59747.765625,
+    "date": "2026-11-25",
+    "price": 60378.19921875,
     "strategy": "sma_trend_buffer"
   },
   "ETH-USD": {
     "action": "SELL",
-    "date": "2026-11-24",
-    "price": 1677.69482421875,
+    "date": "2026-11-25",
+    "price": 1690.76904296875,
     "strategy": "sma_trend_buffer"
   },
   "EURUSD=X": {
     "action": "SELL",
-    "date": "2026-11-25",
-    "price": 1.0962268114089966,
+    "date": "2026-11-26",
+    "price": 1.097008466720581,
     "strategy": "sma_trend_buffer"
   },
   "GBPUSD=X": {
     "action": "BUY",
-    "date": "2026-11-25",
-    "price": 1.3111830949783325,
+    "date": "2026-11-26",
+    "price": 1.3113033771514893,
     "strategy": "sma_trend_buffer"
   },
   "MSFT": {
